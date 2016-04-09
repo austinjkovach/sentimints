@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   
-  Promise.all([
+  return Promise.all([
     knex.schema.createTable('business', function(table){
       table.string('business_id').primary();
       table.string('business_name');
@@ -14,17 +14,18 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable('reviews', function(table){
       table.string('review_id').primary();
       table.integer('review_stars');
-      table.string('review_text');
+      table.text('review_text');
       table.date('review_date');
-      table.string('business_id_fk').references('business_id').inTable('business');
+      table.string('business_id_fk')
+        .references('business_id')
+        .inTable('business');
     })
   ]);
 };
 
 exports.down = function(knex, Promise) {
-  Promise.all([
+  return Promise.all([
     knex.schema.dropTable('business'),
-    knex.schema.dropTable('reviews'),
-    knex.schema.dropTable('businessReviews')
+    knex.schema.dropTable('reviews')
   ]);
 };
