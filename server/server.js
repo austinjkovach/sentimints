@@ -3,7 +3,7 @@ var path = require('path');
 
 var app = express();
 var port = 3000;
-var publicPath = path.resolve(__dirname + '/../client/public');
+var publicPath = path.resolve(__dirname + '/../dist');
 
 app.use(express.static(publicPath));
 
