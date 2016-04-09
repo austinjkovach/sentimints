@@ -1,7 +1,25 @@
 # Sentimints
 
+## Database Setup
 
-# Contributing
+If you don't have Postgres on your computer run
+```
+brew install postgres
+```
+Run npm install
+and then run:
+```
+npm install -g knex
+```
+Then start your database and run:
+```
+postgres -D /usr/local/var/postgres
+createdb sentimints_dev
+knex migrate:latest
+knex seed:run
+```
+
+## Contributing
 
 Pull the most recent version down to your master:
 git pull --rebase origin master
