@@ -27,6 +27,7 @@
     "bluebird": "^3.3.4",
     "d3": "^3.5.16",
     "body-parser": "^1.15.0",
+    "css-loader": "^0.23.1",
     "express": "^4.13.4",
     "havenondemand": "^1.1.1",
     "html-webpack-plugin": "^2.15.0",
@@ -38,10 +39,10 @@
     "pluralize": "^1.2.1",
     "pos": "^0.3.0",
     "react": "^0.14.8",
-    "react-date-picker": "^4.0.10",
     "react-dom": "^0.14.8",
     "react-faux-dom": "^2.4.0",
     "summary-statistics": "^1.0.0",
+    "react-date-picker": "^4.0.10",
     "webpack": "^1.12.13"
   },
   "devDependencies": {
