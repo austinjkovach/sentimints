@@ -14,8 +14,7 @@ class App extends React.Component {
 				{/* Footer with powered by __ */}
 			</div>
 		)
-	}
+  }
 }
 
 ReactDOM.render(<App/>, document.getElementById('app'));
-
