@@ -5,7 +5,7 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "dev": "webpack-dev-server --hot",
+    "dev": "webpack-dev-server --hot --inline",
     "nate-dev": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -39,6 +39,7 @@
     "pluralize": "^1.2.1",
     "pos": "^0.3.0",
     "react": "^0.14.8",
+    "react-bootstrap": "^0.28.5",
     "react-dom": "^0.14.8",
     "react-faux-dom": "^2.4.0",
     "summary-statistics": "^1.0.0",
