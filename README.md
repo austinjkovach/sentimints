@@ -9,7 +9,7 @@ git pull --rebase origin master
 Checkout a new branch for what you're working on:
 git checkout -b feat/a-description-here-#[eg]3
 
-ONLY EVERY PUSH TO YOUR FEATURE BRANCH:
+ONLY EVER PUSH TO YOUR FEATURE BRANCH, AKA DO NOT PUSH TO MASTER:
 git push origin feat/a-description-here-#[eg]3
 
 Submit a pull request on Github from the feature branch to master
