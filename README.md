@@ -35,3 +35,11 @@ Submit a pull request on Github from the feature branch to master
 Someone who is not you must review and merge
 
 Start the cycle over
+
+
+pg_upgrade \
+  -d /usr/local/var/postgres \
+  -D /usr/local/var/postgres9.5 \
+  -b /usr/local/Cellar/postgresql/9.4.5/bin/ \
+  -B /usr/local/Cellar/postgresql/9.5.1/bin/ \
+  -v
