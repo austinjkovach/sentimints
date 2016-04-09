@@ -1,11 +1,11 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
   template: __dirname + '/views/index.html',
   filename: 'index.html',
   inject: 'body'
 });
 
-export {
+module.exports = {
   entry: [
     './server/App.js'
   ],
