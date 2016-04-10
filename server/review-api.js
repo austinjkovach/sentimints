@@ -2,7 +2,7 @@ var express = require('express')
 
 var Promise = require('bluebird')
 var db = require('./db-helpers')
-var sentiments = require('./sentiments.js');
+var sentiments = require('./sentiment.js');
 
 console.log('we are in review-api')
 
