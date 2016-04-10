@@ -35,3 +35,7 @@ node_modules
 .DS_Store
 npm-debug.log
 dist/
+
+
+# Linter file
+.eslintrc.json
