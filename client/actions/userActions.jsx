@@ -1,3 +1,6 @@
+import $ from 'jquery';
+
+
 class UserActions {
   getAllReviews(name) {
     let uri = '/api/get?business_name=' + name
