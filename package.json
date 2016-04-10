@@ -30,6 +30,8 @@
     "knex": "^0.10.0",
     "moment": "^2.12.0",
     "pg": "^4.5.3",
+    "pluralize": "^1.2.1",
+    "pos": "^0.3.0",
     "react": "^0.14.8",
     "react-date-picker": "^4.0.10",
     "react-dom": "^0.14.8",
