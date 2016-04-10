@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/austinjkovach/sentimints.git"
+    "url": "git+https://github.com/antelApps/sentimints.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/austinjkovach/sentimints/issues"
+    "url": "https://github.com/antelApps/sentimints/issues"
   },
-  "homepage": "https://github.com/austinjkovach/sentimints#readme",
+  "homepage": "https://github.com/antelApps/sentimints#readme",
   "dependencies": {
     "babel-core": "^6.5.1",
     "babel-loader": "^6.2.2",
@@ -29,6 +29,7 @@
     "body-parser": "^1.15.0",
     "css-loader": "^0.23.1",
     "express": "^4.13.4",
+    "file-loader": "^0.8.5",
     "havenondemand": "^1.1.1",
     "html-webpack-plugin": "^2.15.0",
     "jquery": "^2.2.3",
@@ -44,6 +45,7 @@
     "react-faux-dom": "^2.4.0",
     "summary-statistics": "^1.0.0",
     "react-date-picker": "^4.0.10",
+    "style-loader": "^0.13.1",
     "webpack": "^1.12.13"
   },
   "devDependencies": {
