@@ -365,6 +365,7 @@ let summStatsAggregates = function(aggregateArray, sentiment) {
   }
 */
 let getAll = function(arrayOfTexts) {
+  console.log('ARRAY OF TEXTS', arrayOfTexts);
 	let reviewAggregates = [];
 	let allSentiments = [];
 
@@ -407,8 +408,9 @@ module.exports.getAll = getAll;
   calls getAll on them
 */
 let getAllFromReviews = function(reviewsArray) {
+  console.log('IN GET ALL')
 	let reviewsText = reviewsArray.map( review => review.review_text)
-	return getAll(reviewsArray);
+	return getAll(reviewsText);
 }
 module.exports.getAllFromReviews = getAllFromReviews;
 
