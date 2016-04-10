@@ -49,14 +49,14 @@ export default class Menu extends React.Component{
 				Start Date:
 				<DatePicker
 				  minDate='2006-04-04'
-				  maxDate='2015-10-10'
+				  maxDate='2006-10-10'
 				  date={Date.now()}
 				  onChange={this.handleDateChange.bind(this, "start")}
 				/>
 
 				End Date:
 				<DatePicker
-				  minDate='2006-04-04'
+				  minDate='2014-04-04'
 				  maxDate='2015-10-10'
 				  date={Date.now()}
 				  onChange={this.handleDateChange.bind(this, "end")}
