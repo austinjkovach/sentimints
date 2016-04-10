@@ -325,7 +325,7 @@ let getAll = function(arrayOfTexts) {
   calls getAll on them
 */
 let getAllFromReviews = function(reviewsArray) {
-	console.log('array', reviewsArray);
+	console.log('IN GET ALL');
 	let reviewsText = reviewsArray.map( review => review.review_text)
 	return getAll(reviewsArray);
 }
