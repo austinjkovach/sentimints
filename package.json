@@ -26,6 +26,7 @@
     "express": "^4.13.4",
     "havenondemand": "^1.1.1",
     "html-webpack-plugin": "^2.15.0",
+    "jquery": "^2.2.3",
     "knex": "^0.10.0",
     "moment": "^2.12.0",
     "pg": "^4.5.3",
