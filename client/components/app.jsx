@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 
 import Menu from "./menu.jsx"
 import Navbar from "./navbar.jsx"
+import Results from "./results.jsx"
 
 class App extends React.Component {
 
@@ -22,11 +23,11 @@ class App extends React.Component {
 			<div>
 			  <Navbar/>
 				<Menu onSearch={this.handleSearch.bind(this)}/>
-				{/* results */}
-				{/* Footer with powered by __ */}
-			</div>
-		)
+        {/* Footer with powered by __ */}
+      </div>
+    )
   }
 }
 
+	// <Results/>
 ReactDOM.render(<App/>, document.getElementById('app'));
