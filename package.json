@@ -29,6 +29,7 @@
     "body-parser": "^1.15.0",
     "css-loader": "^0.23.1",
     "express": "^4.13.4",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "havenondemand": "^1.1.1",
     "html-webpack-plugin": "^2.15.0",
@@ -46,6 +47,7 @@
     "summary-statistics": "^1.0.0",
     "react-date-picker": "^4.0.10",
     "style-loader": "^0.13.1",
+    "summary-statistics": "^1.0.0",
     "webpack": "^1.12.13"
   },
   "devDependencies": {

@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import DatePicker from 'react-date-picker'
 import BusinessSelect from './businessSelect.jsx'
 import StarSelect from './starSelect.jsx'
 import UserActions from '../actions/userActions.jsx'
