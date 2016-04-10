@@ -6,6 +6,7 @@ const Promise = require('bluebird');
 const hod = require('havenondemand');
 const api = process.env['SENTIM'];
 const SS = require('summary-statistics')
+const NOUNS = require('./nouns');
 
 const client = new hod.HODClient(api); //version is optional second argument - right now I don't see a need
 
@@ -115,6 +116,51 @@ let getSentiments = function(resultOfSentimentAnalysis) {
 	let negativeSents = resultOfSentimentAnalysis.negative;
 	return positiveSents.concat(negativeSents);
 }
+
+
+
+/*
+  Takes a sentiment (the full version that you get back from the API)
+  Returns an array with the sentiment duplicated for all of the nouns
+  If there are no nouns, returns an empty array
+  If the topic is null, returns an empty array
+*/
+let sentimentByNouns = function(sentiment) {
+	let topic = sentiment.topic;
+	if (topic === null) {
+		return [];
+	}
+	let nouns = NOUNS.getNouns(topic);
+	if (nouns.length === 0) {
+		return [];
+	} else {
+		return nouns.map( noun => {
+			let newSentiment = {};
+			for (let p in sentiment) {
+				if (p !== 'topic') {
+					newSentiment[p] = sentiment[p];
+				}
+			}
+			newSentiment.topic = noun;
+			return newSentiment;
+		})
+	}
+}
+
+
+
+/*
+  Takes one review (thing you get back from the API)
+  Returns a single array of all sentiments from the reviews, but with the 
+*/
+let getNounSentiments = function(resultOfSentimentAnalysis) {
+	let allSentiments = getSentiments(resultOfSentimentAnalysis);
+	return allSentiments.reduce( (accum, currentSentiment) => {
+		let sentimentArray = sentimentByNouns(currentSentiment);
+		return accum.concat(sentimentArray);
+	}, []);
+}
+
 
 
 /*
@@ -269,6 +315,7 @@ let summStatsAggregates = function(aggregateArray, sentiment) {
 
 
 
+
 /*
   Takes an array of texts
   Returns:
@@ -294,7 +341,7 @@ let getAll = function(arrayOfTexts) {
 	return Promise.all(arrayOfTexts.map( (text) => {
 		return analyzeText(text)
 		  .then( (result) => {
-		  	let sentiments = getSentiments(result);
+		  	let sentiments = getNounSentiments(result);
 		  	allSentiments = allSentiments.concat(sentiments);
 
 		  	let agg = getAggregate(result);
@@ -308,7 +355,9 @@ let getAll = function(arrayOfTexts) {
 		allData.aggregate.negative = summStatsAggregates(reviewAggregates, 'negative');
 
 		//handle allSentiments
+		console.log('all sentiments before summary', allSentiments);
 		let summarizedTopics = topicsScores(topicsMap(allSentiments));
+		console.log('topics are', summarizedTopics)
 		let frequencySummaryStatistics = topicFrequencies(summarizedTopics);
 		let medianSummaryStatistics = summStatsOfMedians(summarizedTopics);
 		allData.topical.worst = getBottomQuartile(summarizedTopics, medianSummaryStatistics);
@@ -334,22 +383,22 @@ let getAllFromReviews = function(reviewsArray) {
 
 //The below is for 'tests'
 
-// let myWords = [
-//   'Amazing So nice people Helpful Friendly Wonderful food Amazing unique drinks and ingredients',
-//   'Went on a Friday night with a group of friends, service was good considering we had a fairly large group, the food was average.The best part of the meal was the nachos we had as an appetizer. The atmosphere was great, the bartender was very knowledgeable, overall was just hoping the food would have been better.',
-//   "This small California-based chain brings an upscale bar and dining experience to Dirty Sixth just across the street from The Driskill Hotel. I've only come here for drinks during SXSW, so my review does not pertain to the culinary experience. A large central bar occupies the majority of this establishment and offers up a large selection of craft beers and whisky. They have solid daily specials and two happy hours each day (2-6PM and 9-11PM).",
-//   "We stumbled into this little restaurant on a quest for onion rings but decided to stay for a full meal. The interior is industrial and beautiful and the restaurant had an inviting, friendly vibe.",
-//   "We ordered the panko onion rings to share, which ended up being three of the biggest onion rings I've ever seen in my life. They were tasty but nothing to write home about. I was a bit disappointed by the slow roasted beet salad. I had been super excited about the watermelon pop rocks that they include in their version of this classic salad, but the experience was lackluster. The residual moisture in the salad made the rocks pop too early, so I was left with pink goo sprinkled around my plate rather than the nice crackling experience I was anticipating. The beets were also not great. They were undercooked and chopped into enormous chunks that I found unmanageable.",
-//   "We started with one waitress who was really wonderful, but we must have caught her at the end of her shift because she disappeared halfway through. Still, service was friendly and efficient.",
-//   "It was happy hour, so I asked my bartender which food special he recommended. Together we went with the chicken tacos. They did not disappoint. (Note: I didn't have a single disappointing taco in this town, including the airport). My bartender also gave me many samples of beers to help me make my selection. (Well, he did that until he got too busy to give me as much special attention--bartender attention is just one of the many benefits to day drinking). ",
-//   "In short, Yelp wins again! Thanks to the Yelpers who visited before me to help me drink good beer and nosh good tacos.",
-//   "I've been to multiple Eurekas around the country and I must say this is probably the best one I've been to. Great beer selection with many local taps. Love the atmosphere and setup. Great location as well. "
-// ]
+let myWords = [
+  'Amazing So nice people Helpful Friendly Wonderful food Amazing unique drinks and ingredients',
+  'Went on a Friday night with a group of friends, service was good considering we had a fairly large group, the food was average.The best part of the meal was the nachos we had as an appetizer. The atmosphere was great, the bartender was very knowledgeable, overall was just hoping the food would have been better.',
+  "This small California-based chain brings an upscale bar and dining experience to Dirty Sixth just across the street from The Driskill Hotel. I've only come here for drinks during SXSW, so my review does not pertain to the culinary experience. A large central bar occupies the majority of this establishment and offers up a large selection of craft beers and whisky. They have solid daily specials and two happy hours each day (2-6PM and 9-11PM).",
+  "We stumbled into this little restaurant on a quest for onion rings but decided to stay for a full meal. The interior is industrial and beautiful and the restaurant had an inviting, friendly vibe.",
+  "We ordered the panko onion rings to share, which ended up being three of the biggest onion rings I've ever seen in my life. They were tasty but nothing to write home about. I was a bit disappointed by the slow roasted beet salad. I had been super excited about the watermelon pop rocks that they include in their version of this classic salad, but the experience was lackluster. The residual moisture in the salad made the rocks pop too early, so I was left with pink goo sprinkled around my plate rather than the nice crackling experience I was anticipating. The beets were also not great. They were undercooked and chopped into enormous chunks that I found unmanageable.",
+  "We started with one waitress who was really wonderful, but we must have caught her at the end of her shift because she disappeared halfway through. Still, service was friendly and efficient.",
+  "It was happy hour, so I asked my bartender which food special he recommended. Together we went with the chicken tacos. They did not disappoint. (Note: I didn't have a single disappointing taco in this town, including the airport). My bartender also gave me many samples of beers to help me make my selection. (Well, he did that until he got too busy to give me as much special attention--bartender attention is just one of the many benefits to day drinking). ",
+  "In short, Yelp wins again! Thanks to the Yelpers who visited before me to help me drink good beer and nosh good tacos.",
+  "I've been to multiple Eurekas around the country and I must say this is probably the best one I've been to. Great beer selection with many local taps. Love the atmosphere and setup. Great location as well. "
+]
 
-// return getAll(myWords)
-//   .then(function(x) {
-//   	console.log('got x', x)
-//   })
+return getAll(myWords)
+  .then(function(x) {
+  	console.log('got x', x)
+  })
 
 
 
@@ -370,7 +419,5 @@ By topic:
 - Hottest (recency + frequency)
 
 */
-
-
 
 
