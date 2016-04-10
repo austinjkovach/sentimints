@@ -187,8 +187,7 @@ let topicsScores = function(mapOfTopics) {
 */
 let summStatsOfMedians = function(topicsWithScores) {
 	let medians = topicsWithScores.map( topicObj => topicObj.stats.median);
-	console.log('medians', medians);
-	return getSummStats(median);
+	return getSummStats(medians);
 }
 
 
@@ -228,7 +227,6 @@ let getTopQuartile = function(allTopics, medianSummStats) {
   Returns the 
 */
 let topicFrequencies = function(allTopics) {
-	console.log('passed into topicFrequencies', allTopics,'an', typeof allTopics)
 	let nData = allTopics.map(t => t.stats.num)
 	return getSummStats(nData);
 }
@@ -249,6 +247,24 @@ let mostPopular = function(allTopics, frequencySummStats) {
 
 
 
+/*
+  Takes an array of aggregates
+  If second argument is passed in, returns the summary statistics for all reviews matching that sentiment
+  If no second argument is passed in, returns the summary statistics for all the reviews
+  If no reviews match the sentiment (or none are passed in), returns null
+*/
+let summStatsAggregates = function(aggregateArray, sentiment) {
+	let predicate = function(review) {
+		return sentiment ? (review.sentiment === sentiment): true;
+	}
+	let matchingReviews = aggregateArray.filter( review => predicate(review));
+	if (matchingReviews.length === 0) {
+		return null
+	} else {
+		let scores = matchingReviews.map( review => review.score);
+		return getSummStats(scores);
+	}
+}
 
 
 
@@ -278,57 +294,64 @@ let getAll = function(arrayOfTexts) {
 	return Promise.all(arrayOfTexts.map( (text) => {
 		return analyzeText(text)
 		  .then( (result) => {
-		  	console.log('my result is', result);
 		  	let sentiments = getSentiments(result);
-		  	console.log('sentiments for this review', sentiments)
 		  	allSentiments = allSentiments.concat(sentiments);
 
 		  	let agg = getAggregate(result);
-		  	console.log('aggregate for this review', agg);
 		  	reviewAggregates.push(agg);
 		  })
 	}))
 	.then( function() {
-		console.log('reviewAggregates at this point is', reviewAggregates,'an', typeof reviewAggregates);
-		console.log('allSentiments at this point is', allSentiments,'an', typeof allSentiments);
 		//handle reviewAggregates
+		allData.aggregate.all = summStatsAggregates(reviewAggregates);
+		allData.aggregate.positive = summStatsAggregates(reviewAggregates, 'positive');
+		allData.aggregate.negative = summStatsAggregates(reviewAggregates, 'negative');
 
 		//handle allSentiments
 		let summarizedTopics = topicsScores(topicsMap(allSentiments));
 		let frequencySummaryStatistics = topicFrequencies(summarizedTopics);
-		let medianSummaryStatistics = topicFrequencies(summarizedTopics);
-		console.log('median summary stats', medianSummaryStatistics);
+		let medianSummaryStatistics = summStatsOfMedians(summarizedTopics);
 		allData.topical.worst = getBottomQuartile(summarizedTopics, medianSummaryStatistics);
-		console.log('worst is', allData.topical.worst);
 		allData.topical.best = getTopQuartile(summarizedTopics, medianSummaryStatistics);
-		console.log('best is', allData.topical.best);
 		allData.topical.hot = mostPopular(summarizedTopics, frequencySummaryStatistics);
 
 		return allData;
 	})
 }
 
-let myWords = [
-  'Amazing So nice people Helpful Friendly Wonderful food Amazing unique drinks and ingredients',
-  'Went on a Friday night with a group of friends, service was good considering we had a fairly large group, the food was average.The best part of the meal was the nachos we had as an appetizer. The atmosphere was great, the bartender was very knowledgeable, overall was just hoping the food would have been better.',
-  "This small California-based chain brings an upscale bar and dining experience to Dirty Sixth just across the street from The Driskill Hotel. I've only come here for drinks during SXSW, so my review does not pertain to the culinary experience. A large central bar occupies the majority of this establishment and offers up a large selection of craft beers and whisky. They have solid daily specials and two happy hours each day (2-6PM and 9-11PM).",
-  "We stumbled into this little restaurant on a quest for onion rings but decided to stay for a full meal. The interior is industrial and beautiful and the restaurant had an inviting, friendly vibe.",
-  "We ordered the panko onion rings to share, which ended up being three of the biggest onion rings I've ever seen in my life. They were tasty but nothing to write home about. I was a bit disappointed by the slow roasted beet salad. I had been super excited about the watermelon pop rocks that they include in their version of this classic salad, but the experience was lackluster. The residual moisture in the salad made the rocks pop too early, so I was left with pink goo sprinkled around my plate rather than the nice crackling experience I was anticipating. The beets were also not great. They were undercooked and chopped into enormous chunks that I found unmanageable.",
-  "We started with one waitress who was really wonderful, but we must have caught her at the end of her shift because she disappeared halfway through. Still, service was friendly and efficient.",
-  "It was happy hour, so I asked my bartender which food special he recommended. Together we went with the chicken tacos. They did not disappoint. (Note: I didn't have a single disappointing taco in this town, including the airport). My bartender also gave me many samples of beers to help me make my selection. (Well, he did that until he got too busy to give me as much special attention--bartender attention is just one of the many benefits to day drinking). ",
-  "In short, Yelp wins again! Thanks to the Yelpers who visited before me to help me drink good beer and nosh good tacos.",
-  "I've been to multiple Eurekas around the country and I must say this is probably the best one I've been to. Great beer selection with many local taps. Love the atmosphere and setup. Great location as well. "
-]
 
-return getAll(myWords)
-  .then(function(x) {
-  	// console.log('ended up with this object', x)
-  })
+/*
+  Takes an array of reviews from the database
+  calls getAll on them
+*/
+let getAllFromReviews = function(reviewsArray) {
+	let reviewsText = reviewsArray.map( review => review.review_text)
+	return getAll(reviewsArray);
+}
 
-// return analyzeText(myWords[0])
-//   .then( function(txt) {
-//   	console.log('got', txt, 'from first')
+
+
+
+//The below is for 'tests'
+
+// let myWords = [
+//   'Amazing So nice people Helpful Friendly Wonderful food Amazing unique drinks and ingredients',
+//   'Went on a Friday night with a group of friends, service was good considering we had a fairly large group, the food was average.The best part of the meal was the nachos we had as an appetizer. The atmosphere was great, the bartender was very knowledgeable, overall was just hoping the food would have been better.',
+//   "This small California-based chain brings an upscale bar and dining experience to Dirty Sixth just across the street from The Driskill Hotel. I've only come here for drinks during SXSW, so my review does not pertain to the culinary experience. A large central bar occupies the majority of this establishment and offers up a large selection of craft beers and whisky. They have solid daily specials and two happy hours each day (2-6PM and 9-11PM).",
+//   "We stumbled into this little restaurant on a quest for onion rings but decided to stay for a full meal. The interior is industrial and beautiful and the restaurant had an inviting, friendly vibe.",
+//   "We ordered the panko onion rings to share, which ended up being three of the biggest onion rings I've ever seen in my life. They were tasty but nothing to write home about. I was a bit disappointed by the slow roasted beet salad. I had been super excited about the watermelon pop rocks that they include in their version of this classic salad, but the experience was lackluster. The residual moisture in the salad made the rocks pop too early, so I was left with pink goo sprinkled around my plate rather than the nice crackling experience I was anticipating. The beets were also not great. They were undercooked and chopped into enormous chunks that I found unmanageable.",
+//   "We started with one waitress who was really wonderful, but we must have caught her at the end of her shift because she disappeared halfway through. Still, service was friendly and efficient.",
+//   "It was happy hour, so I asked my bartender which food special he recommended. Together we went with the chicken tacos. They did not disappoint. (Note: I didn't have a single disappointing taco in this town, including the airport). My bartender also gave me many samples of beers to help me make my selection. (Well, he did that until he got too busy to give me as much special attention--bartender attention is just one of the many benefits to day drinking). ",
+//   "In short, Yelp wins again! Thanks to the Yelpers who visited before me to help me drink good beer and nosh good tacos.",
+//   "I've been to multiple Eurekas around the country and I must say this is probably the best one I've been to. Great beer selection with many local taps. Love the atmosphere and setup. Great location as well. "
+// ]
+
+// return getAll(myWords)
+//   .then(function(x) {
+//   	console.log('got x', x)
 //   })
+
+
 
 /*
 Aggregate (by review)
